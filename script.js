@@ -10,17 +10,18 @@ function getFirstDayOfYear(year) {
     return d.getDay();
 }
 
-function findMatchingYears(inputYear, searchRange) { // Added searchRange parameter
+function findMatchingYears(inputYear, searchRange) { // Added searchRange
     if (inputYear < 1) {
+        // This case should ideally be handled by the input type="number" min="1"
+        // but good to have a fallback.
         return [];
     }
 
-    const inputYearIsLeap = isLeap(inputYear);
+    const inputYearIsLeap = isLeap(inputYear); // This line and below should be inside the function
     const inputYearFirstDay = getFirstDayOfYear(inputYear);
     const matchingYears = [];
 
-    // Use the provided searchRange
-    for (let year = inputYear + 1; year <= inputYear + searchRange; year++) {
+    for (let year = inputYear + 1; year <= inputYear + searchRange; year++) { // Use searchRange
         if (isLeap(year) === inputYearIsLeap && getFirstDayOfYear(year) === inputYearFirstDay) {
             matchingYears.push(year);
         }
@@ -39,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultsList.innerHTML = '';
 
             const year = parseInt(yearInput.value);
-            let searchRange = parseInt(rangeInput.value); // Get the search range value
+            let searchRange = parseInt(rangeInput.value);
 
             if (isNaN(year) || year < 1) {
                 alert('Please enter a valid year (e.g., 2023).');
@@ -47,15 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Validate searchRange, default to 200 if invalid or empty
             if (isNaN(searchRange) || searchRange < 1) {
-                searchRange = 200;
-                rangeInput.value = "200"; // Optionally update the input field to show the default used
-                // alert('Search range is invalid. Defaulting to 200 years.'); // Optional: notify user
+                searchRange = 200; // Default search range
+                rangeInput.value = "200";
             }
 
-            // Pass searchRange to findMatchingYears
-            const matches = findMatchingYears(year, searchRange);
+            const matches = findMatchingYears(year, searchRange); // Pass searchRange
 
             if (matches.length > 0) {
                 matches.forEach(matchYear => {
@@ -65,12 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             } else {
                 const listItem = document.createElement('li');
+                // Updated message to reflect the dynamic range
                 listItem.textContent = `No matching years found for ${year} within the next ${searchRange} years.`;
                 resultsList.appendChild(listItem);
             }
         });
     } else {
-        console.error('Initialization Error: Required HTML elements not found.');
+        console.error('Initialization Error: Required HTML elements (button, input, range input, or results list) not found.');
         alert('Could not initialize the page correctly. Please ensure all HTML elements are present.');
     }
 });
